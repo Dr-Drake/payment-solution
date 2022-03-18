@@ -1,26 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
+import { IUserService } from './interfaces/user.interfaace';
 
 @Injectable()
-export class UserService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+export class UserService implements IUserService {
+  createUser(request: CreateUserDto): Promise<User> {
+    throw new Error('Method not implemented.');
   }
-
-  findAll() {
-    return `This action returns all user`;
+  findAllUsers(): Promise<User[]> {
+    throw new Error('Method not implemented.');
   }
-
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findUserById(id: number): Promise<User> {
+    throw new Error('Method not implemented.');
   }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  findUserByEmail(email: string): Promise<User> {
+    throw new Error('Method not implemented.');
   }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  findUserByPhoneNumber(phone_number: number): Promise<User> {
+    throw new Error('Method not implemented.');
   }
+  
 }

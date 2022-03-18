@@ -13,17 +13,18 @@ export async function up(knex: Knex): Promise<void> {
     })
     .createTable('account', (table: Knex.CreateTableBuilder)=>{
         table.increments('id').primary();
-        table.integer('accountNumber').notNullable().unique().checkLength('>=', 10);
+        table.integer('account_number').notNullable().unique().checkLength('>=', 10);
         table.double('balance', 2).notNullable().defaultTo(0);
-        table.integer('userId').references('user.id');
-        table.integer('userEmail').references('user.email');
-        table.integer('userPhoneNumber').references('user.phone_number');
+        table.integer('user_id').references('user.id');
+        table.integer('user_email').references('user.email');
+        table.integer('user_phone_number').references('user.phone_number');
+        table.integer('account_pin').notNullable().checkPositive().checkLength('=', 4);
         table.timestamps(true, true);
     })
     .createTable('transaction', (table: Knex.CreateTableBuilder)=>{
         table.increments('id').primary();
-        table.integer('accountCredited').notNullable().checkLength('>=', 10);
-        table.integer('accountDebited').notNullable().checkLength('>=', 10);
+        table.integer('account_credited').notNullable().checkLength('>=', 10);
+        table.integer('account_debited').notNullable().checkLength('>=', 10);
         table.double('amount', 2).notNullable();
         table.string('comments');
 
