@@ -1,22 +1,21 @@
 import { HttpException, HttpStatus } from "@nestjs/common";
 import { CreateUserDto } from "../dto/create-user.dto";
 import { User } from "../entities/user.entity";
-import { IUserService } from "../interfaces/user.interfaace";
+import { CreateUserResponse } from "../interfaces/responses/createResponse";
 import userDb from "./user.data";
 
 const mockUserService = {
-    createUser: jest.fn().mockImplementation((request: CreateUserDto)=>{
+    createUser: jest.fn().mockImplementation((request: CreateUserDto): CreateUserResponse=>{
         let user = new User();
-        user.id = 3;
         user.email = request.email;
         user.first_name = request.first_name;
         user.last_name = request.last_name;
         user.password = request.password;
         user.phone_number = request.phone_number;
-       let result = {
-           ...userDb,
-           ...user
-       }
+        let result: CreateUserResponse = {
+            ...user,
+            account_number: '0446937765',
+        }
 
        return result;
     }),
@@ -45,7 +44,7 @@ const mockUserService = {
         }
     }),
     
-    findUserByPhoneNumber: jest.fn().mockImplementation((phone_number: number)=>{
+    findUserByPhoneNumber: jest.fn().mockImplementation((phone_number: string)=>{
         let user = userDb.find((u)=> u.phone_number === phone_number );
         if (!user) {
             Promise.resolve(new HttpException('Not Found', HttpStatus.NOT_FOUND));

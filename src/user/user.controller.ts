@@ -1,11 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Inject } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { IUserService, USER_SERVICE } from './interfaces/user.interfaace';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    @Inject(USER_SERVICE) private readonly userService: IUserService
+  ) {}
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
@@ -17,9 +20,14 @@ export class UserController {
     return this.userService.findAllUsers();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findUserById(+id);
+  @Get(':email')
+  findUserByEmail(@Param('email') email: string) {
+    return this.userService.findUserByEmail(email);
+  }
+
+  @Get(':phone_number')
+  findUserByPhoneNumber(@Param('phone_number') phone_number: string) {
+    return this.userService.findUserByPhoneNumber(phone_number);
   }
 
   // @Patch(':id')
