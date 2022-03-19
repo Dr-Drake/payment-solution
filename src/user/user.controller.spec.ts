@@ -34,6 +34,7 @@ describe('UserController', () => {
 
   /** Tests */
 
+  // Make sure dependencies are in place
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
