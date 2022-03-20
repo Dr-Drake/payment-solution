@@ -1,44 +1,49 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
+import { AppModule } from '../src/app.module';
 import { UserModule } from '../src/user/user.module';
 import { Knex, KnexModule } from 'nestjs-knex';
-import knexfile, { TEST_CONNECTION } from '../src/database/knexfile';
+import knexfile, { DEV_CONNECTION, TEST_CONNECTION } from '../src/database/knexfile';
 import { type } from 'os';
 import { User } from '../src/user/entities/user.entity';
 import { CreateUserDto } from '../src/user/dto/create-user.dto';
 import knex from 'knex';
-import { IUserService, USER_SERVICE } from 'src/user/interfaces/user.interfaace';
+import { IUserService, USER_SERVICE } from '../src/user/interfaces/user.interfaace';
+import { AccountNumberEntity } from '../src/account/entities/account.entity';
+import { CreateUserResponse } from '../src/user/interfaces/responses/createResponse';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
-  let knex: Knex;
+  let db: Knex;
 
   beforeAll(async () => {
+    db = knex(knexfile['testing']);
     const moduleFixture: TestingModule = await Test.createTestingModule({
         imports: [
             UserModule,
             KnexModule.forRoot({
                 config: knexfile['testing'],
-            }, TEST_CONNECTION),
+            }, DEV_CONNECTION),
         ],
     })
+    .overrideProvider(DEV_CONNECTION)
+    .useValue(db)
     .compile();
     app = moduleFixture.createNestApplication();
-    knex = moduleFixture.get<Knex>(TEST_CONNECTION);
     await app.init();
   });
 
   afterAll(async () => {
-      // Delete all existing entries in tables
-      await knex('user').del();
-      await knex('account').del();
+       // Delete all existing entries in tables
+      await db('account').del();
+      await db('user').del();
 
       // Reset account numbers to unused
-      knex.schema.alterTable('account_numbers', (table)=>{
-        table.boolean('used').defaultTo(false).alter();
-      })
+      await db<AccountNumberEntity>('account_numbers').update('used', false);
+
+      // Close connection
+      db.destroy();
   })
 
   /** Mock Inputs */
@@ -56,15 +61,13 @@ describe('AppController (e2e)', () => {
       .send(createRequest)
       .expect(201)
       .then((response)=>{
-          expect(response.body).toEqual<User>({
+          expect(response.body).toEqual<CreateUserResponse>({
             id: expect.any(Number),
-            email: createRequest.email;
-            password: createRequest.password;
-            phone_number: string;
-            last_name: string;
-            first_name: string;
-            created_at?: Date;
-            updated_at ?: Date;
+            email: createRequest.email,
+            phone_number: createRequest.phone_number,
+            last_name: createRequest.last_name,
+            first_name: createRequest.first_name,
+            account_number: expect.any(String)
           })
       })
   });

@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { CreateUserResponse } from './interfaces/responses/createResponse';
@@ -9,6 +9,8 @@ import { DEV_CONNECTION } from '../database/knexfile';
 import { CreateAccountDto } from '../account/dto/create-account.dto';
 import AccountType from '../account/enums/AccountTypes';
 import { ACCOUNT_SERVICE, IAccountService } from '../account/interfaces/account.interface';
+import { Account } from '../account/entities/account.entity';
+import { FetchUserResponse } from './interfaces/responses/fetchUserResponse';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -28,27 +30,31 @@ export class UserService implements IUserService {
 
     if (user) {
 
-      // // Check if user has an account
+      // Check if user has an account
+      let account: Account = await this.accountService.findAccountByEmail(user.email);
+
+      if (account) {
+        throw new BadRequestException('User already exists');
+      }
       
-      // // If account not created, create it
-      // let accountCreateRequest: CreateAccountDto = {
-      //   user_id: user.id,
-      //   user_email: user.email,
-      //   user_phone_number: user.phone_number,
-      //   type: AccountType.CURRENT
-      // }
-      // let accountCreateResult = await this.accountService.createAccount(accountCreateRequest);
-      // let response: CreateUserResponse = {
-      //   id: user.id,
-      //   email: user.email,
-      //   phone_number: user.phone_number,
-      //   last_name: user.last_name,
-      //   first_name: user.first_name,
-      //   account_number: accountCreateResult.account_number
-      // }
-      // return response
-      // Log user
-      throw new BadRequestException('User already exists');
+      // If account not created, create it
+      let accountCreateRequest: CreateAccountDto = {
+        user_id: user.id,
+        user_email: user.email,
+        user_phone_number: user.phone_number,
+        type: AccountType.CURRENT
+      }
+      let accountCreateResult = await this.accountService.createAccount(accountCreateRequest);
+      let response: CreateUserResponse = {
+        id: user.id,
+        email: user.email,
+        phone_number: user.phone_number,
+        last_name: user.last_name,
+        first_name: user.first_name,
+        account_number: accountCreateResult.account_number
+      }
+      return response
+    
     }
 
     // If not, create new user and save
@@ -88,22 +94,38 @@ export class UserService implements IUserService {
     }
   }
 
+  public async findUserByEmail(email: string): Promise<FetchUserResponse> {
+    let user: User = await this.knex<User>('user').where('email', '=', email).first()
+
+    if (user) {
+      let response: FetchUserResponse = {
+        id: user.id,
+        email: user.email,
+        phone_number: user.phone_number,
+        last_name: user.last_name,
+        first_name: user.first_name,
+      }
+      return response;
+    }
+
+    // otherwise not found
+    throw new NotFoundException('User not found');
+    
+  }
+
 
   /**
-   * No need to implement
+   * No need to implement the rest
    */
-  public async findAllUsers(): Promise<User[]> {
+  public async findAllUsers(): Promise<FetchUserResponse[]> {
     
     throw new Error('Method not implemented.');
   }
   
-  findUserById(id: number): Promise<User> {
+  findUserById(id: number): Promise<FetchUserResponse> {
     throw new Error('Method not implemented.');
   }
-  findUserByEmail(email: string): Promise<User> {
-    throw new Error('Method not implemented.');
-  }
-  findUserByPhoneNumber(phone_number: string): Promise<User> {
+  findUserByPhoneNumber(phone_number: string): Promise<FetchUserResponse> {
     throw new Error('Method not implemented.');
   }
   

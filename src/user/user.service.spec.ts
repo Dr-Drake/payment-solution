@@ -13,7 +13,7 @@ describe('UserService', () => {
   let service: UserService;
   let db: Knex;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     db = knex(knexfile['testing']);
     const module: TestingModule = await Test.createTestingModule({
       imports:[

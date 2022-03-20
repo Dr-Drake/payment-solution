@@ -4,13 +4,13 @@ import { InjectKnex, Knex } from 'nestjs-knex';
 import { User } from 'src/user/entities/user.entity';
 import { IAuthService } from './interfaces/auth.interface';
 import { LoginResponse } from './interfaces/responses/LoginResponse';
-import bcrypt from 'bcrypt';
+import { compare } from 'bcrypt';
 import { DEV_CONNECTION } from '../database/knexfile';
 
 @Injectable()
 export class AuthService implements IAuthService {
     constructor(
-        @Inject() private jwtService: JwtService,
+        private jwtService: JwtService,
         @InjectKnex(DEV_CONNECTION) private readonly knex: Knex
     ){}
 
@@ -20,7 +20,7 @@ export class AuthService implements IAuthService {
 
         if (user) {
             // validte password
-            let match = await bcrypt.compare(password, user.password);
+            let match = await compare(password, user.password);
 
             if (match) {
                 return user;

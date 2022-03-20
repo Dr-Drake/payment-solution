@@ -49,4 +49,9 @@ export class AccountService implements IAccountService {
     }
   }
 
+  public async findAccountByEmail(email: string): Promise<Account> {
+    let account = await this.knex<Account>('account').where('user_email', '=', email).first();
+    return account;
+  }
+
 }

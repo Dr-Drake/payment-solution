@@ -1,8 +1,5 @@
-export interface CreateUserResponse{
-    id: number;
-    email: string;
-    phone_number: string;
-    last_name: string;
-    first_name: string;
+import { FetchUserResponse } from "./fetchUserResponse";
+
+export interface CreateUserResponse extends FetchUserResponse{
     account_number: string;
 }
