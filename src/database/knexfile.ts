@@ -5,14 +5,18 @@ import type { Knex } from "knex";
 //TODO
 // Change staging and production
 
+export const TEST_CONNECTION = 'TEST_CONNECTION';
+export const DEV_CONNECTION = 'DEV_CONNECTION';
+
 const config: { [key: string]: Knex.Config } = {
+  // Ideally should be in env variables
   development: {
     client: 'mysql',
     connection: {
       host : '127.0.0.1',
       port : 3306,
-      user : 'root',
-      //password : 'your_database_password',
+      user : 'payment',
+      password : 'password',
       database : 'payment_monolith'
     },
     pool:{
@@ -21,41 +25,32 @@ const config: { [key: string]: Knex.Config } = {
     },
     migrations: {
       tableName: "knex_migrations"
+    },
+    seeds: {
+      directory: './seeds'
     }
   },
 
-  staging: {
-    client: "postgresql",
+  testing:{
+    client: 'mysql',
     connection: {
-      database: "my_db",
-      user: "username",
-      password: "password"
+      host : '127.0.0.1',
+      port : 3306,
+      user : 'payment',
+      password : 'password',
+      database : 'payment_monolith_test'
     },
-    pool: {
+    pool:{
       min: 2,
       max: 10
     },
     migrations: {
       tableName: "knex_migrations"
-    }
-  },
-
-  production: {
-    client: "postgresql",
-    connection: {
-      database: "my_db",
-      user: "username",
-      password: "password"
     },
-    pool: {
-      min: 2,
-      max: 10
-    },
-    migrations: {
-      tableName: "knex_migrations"
+    seeds: {
+      directory: './seeds'
     }
   }
-
 };
 
 export default config;

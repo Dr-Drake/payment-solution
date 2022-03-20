@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { USER_SERVICE } from './interfaces/user.interfaace';
-import { AuthModule } from 'src/auth/auth.module';
-import { AccountModule } from 'src/account/account.module';
+import { AuthModule } from '../auth/auth.module';
+import { AccountModule } from '../account/account.module';
 
 @Module({
   imports:[AuthModule, AccountModule],

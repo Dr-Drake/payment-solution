@@ -42,8 +42,12 @@ describe('UserController', () => {
   it('should create a user account', async()=>{
     expect(await controller.create(createRequest))
     .toEqual<CreateUserResponse>({
-      ...createRequest,
-      account_number: '0446937765'
+      email: createRequest.email,
+      phone_number: createRequest.phone_number,
+      last_name: createRequest.last_name,
+      first_name: createRequest.first_name,
+      account_number: '0446937765',
+      id: 0,
     })
   });
 

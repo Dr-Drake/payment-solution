@@ -1,4 +1,5 @@
 import { Knex } from "knex";
+import AccountType from "../../account/enums/AccountTypes";
 
 
 export async function up(knex: Knex): Promise<void> {
@@ -13,18 +14,20 @@ export async function up(knex: Knex): Promise<void> {
     })
     .createTable('account', (table: Knex.CreateTableBuilder)=>{
         table.increments('id').primary();
-        table.string('account_number').notNullable().unique().checkLength('>=', 10);
+        table.string('account_number', 10).notNullable().unique().checkLength('>=', 10);
         table.double('balance', 2).notNullable().defaultTo(0);
-        table.integer('user_id').references('user.id');
-        table.integer('user_email').references('user.email');
-        table.string('user_phone_number').references('user.phone_number');
-        table.integer('account_pin').notNullable().checkPositive().checkLength('=', 4);
+        table.integer('user_id').unsigned();
+        table.foreign('user_id').references('user.id').onDelete('cascade').onUpdate('cascade');
+        table.string('user_email').references('user.email').onDelete('cascade').onUpdate('cascade');
+        table.string('user_phone_number').references('user.phone_number').onDelete('cascade').onUpdate('cascade');
+        table.integer('account_pin').nullable().checkPositive().checkLength('=', 4);
+        table.enu('type', [AccountType.CURRENT, AccountType.SAVINGS]);
         table.timestamps(true, true);
     })
     .createTable('transaction', (table: Knex.CreateTableBuilder)=>{
         table.increments('id').primary();
-        table.string('account_credited').notNullable().checkLength('>=', 10);
-        table.string('account_debited').notNullable().checkLength('>=', 10);
+        table.string('account_credited', 10).notNullable().checkLength('>=', 10);
+        table.string('account_debited', 10).notNullable().checkLength('>=', 10);
         table.double('amount', 2).notNullable();
         table.string('comments');
 
@@ -40,8 +43,8 @@ export async function up(knex: Knex): Promise<void> {
 
 
 export async function down(knex: Knex): Promise<void> {
-    return knex.schema.dropTable('user')
-    .dropTable('account')
+    return knex.schema.dropTable('account')
+    .dropTable('user')
     .dropTable('transaction');
 }
 

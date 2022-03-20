@@ -5,12 +5,13 @@ import { User } from 'src/user/entities/user.entity';
 import { IAuthService } from './interfaces/auth.interface';
 import { LoginResponse } from './interfaces/responses/LoginResponse';
 import bcrypt from 'bcrypt';
+import { DEV_CONNECTION } from '../database/knexfile';
 
 @Injectable()
 export class AuthService implements IAuthService {
     constructor(
         @Inject() private jwtService: JwtService,
-        @InjectKnex() private readonly knex: Knex
+        @InjectKnex(DEV_CONNECTION) private readonly knex: Knex
     ){}
 
     public async validateUser(email: string, password: string): Promise<User> {

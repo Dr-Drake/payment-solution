@@ -1,1 +1,21 @@
 npx knex migrate:make init --migrations-directory src/database/migrations -x ts
+npx knex migrate:latest --knexfile src/database/knexfile.ts 
+npx knex migrate:rollback --knexfile src/database/knexfile.ts 
+
+npx knex migrate:up 20220317153305_init.ts --knexfile src/database/knexfile.ts 
+npx knex migrate:down 20220317153305_init.ts --knexfile src/database/knexfile.ts 
+
+
+// For test
+npx knex migrate:latest --knexfile src/database/knexfile-test.ts 
+npx knex migrate:rollback --knexfile src/database/knexfile-test.ts
+
+npx knex migrate:up 20220317153305_init.ts --knexfile src/database/knexfile-test.ts 
+npx knex migrate:down 20220317153305_init.ts --knexfile src/database/knexfile-test.ts 
+
+
+// Seeds
+npx knex seed:make 01_account_numbers --knexfile src/database/knexfile.ts -x ts
+npx knex seed:make 01_account_numbers --knexfile src/database/knexfile-test.ts -x ts
+npx knex seed:run --knexfile src/database/knexfile.ts
+npx knex seed:run --knexfile src/database/knexfile-test.ts

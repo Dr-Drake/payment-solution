@@ -5,7 +5,7 @@ import { CreateUserResponse } from "../interfaces/responses/createResponse";
 import userDb from "./user.data";
 
 const mockUserService = {
-    createUser: jest.fn().mockImplementation((request: CreateUserDto): CreateUserResponse=>{
+    createUser: jest.fn().mockImplementation((request: CreateUserDto): Promise<CreateUserResponse>=>{
         let user = new User();
         user.email = request.email;
         user.first_name = request.first_name;
@@ -13,11 +13,15 @@ const mockUserService = {
         user.password = request.password;
         user.phone_number = request.phone_number;
         let result: CreateUserResponse = {
-            ...user,
+            email: user.email,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            phone_number: user.phone_number,
+            id: 0,
             account_number: '0446937765',
         }
 
-       return result;
+       return Promise.resolve(result);
     }),
         
     findAllUsers: jest.fn().mockImplementation(()=>{
