@@ -15,7 +15,7 @@ import { IAccountService, ACCOUNT_SERVICE } from '../src/account/interfaces/acco
 import { FundDto } from '../src/payment/dto/fund.dto';
 import { FundResponse } from '../src/payment/interfaces/response/FundResponse';
 import { TransferDto } from '../src/payment/dto/transfer.dto';
-import { AccountNumberEntity } from '../src/account/entities/account.entity';
+import { Account, AccountNumberEntity } from '../src/account/entities/account.entity';
 import { ConfigModule } from '@nestjs/config';
 import { KnexModule } from 'nestjs-knex';
 import { AccountModule } from '../src/account/account.module';
@@ -162,6 +162,24 @@ describe('AppController (e2e)', () => {
             account_number: user1.account_number,
             message: expect.any(String)
           })
+      })
+  });
+
+  it('/api/v1/account/account (GET)', () => {
+    return request(app.getHttpServer())
+      .get('/api/v1/account')
+      .expect(200)
+      .then((response)=>{
+          expect(response.body).toBeDefined()
+      })
+  });
+
+  it('/api/v1/account/account/email (GET)', () => {
+    return request(app.getHttpServer())
+      .get('/api/v1/account' + '/' + user1.email)
+      .expect(200)
+      .then((response)=>{
+          expect(response.body).toBeInstanceOf(Object);
       })
   });
 

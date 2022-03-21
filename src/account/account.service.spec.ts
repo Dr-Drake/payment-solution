@@ -109,6 +109,20 @@ describe('AccountService', () => {
       message: expect.any(String)
     })
   })
+
+  it("should return a list of all accounts", async ()=>{
+    expect(await service.findAllAccounts())
+    .toEqual([
+      {
+        "account_number": expect.any(String), 
+        "balance": 0, 
+        "created_at": expect.any(Date),
+        "type": expect.anything(), 
+        "updated_at": expect.any(Date), 
+        "user_email": expect.any(String)
+      }
+    ])
+  })
 });
 
 

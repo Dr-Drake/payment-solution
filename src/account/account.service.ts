@@ -80,4 +80,10 @@ export class AccountService implements IAccountService {
     return account;
   }
 
+  public async findAllAccounts(): Promise<Pick<Account, "account_number" | "balance" | "user_email" | "type" | "created_at" | "updated_at">[]> {
+    let account = await this.knex<Account>('account')
+    .select('account_number', 'balance', 'user_email', 'created_at', 'updated_at', 'type')
+    return account;
+  }
+
 }

@@ -21,4 +21,14 @@ export class AccountController {
   createPin(@Body() request: CreatePinDto, @Request() req){
     return this.accountService.createAccountPin(request, req.user.email);
   }
+
+  @Get(':email')
+  findAccount(@Param('email') email: string){
+    return this.accountService.findAccountByEmail(email);
+  }
+
+  @Get()
+  findAll(){
+    return this.accountService.findAllAccounts();
+  }
 }
