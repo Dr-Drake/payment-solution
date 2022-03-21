@@ -24,7 +24,12 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+[Nest](https://github.com/nestjs/nest) framework TypeScript repository.
+This repo represents an attenpt to build a system give the following requirements:
+ - A user can create an account
+- A user can fund their account
+- A user can transfer funds to another user’s account
+- A user can withdraw funds from their account.
 
 ## Installation
 
@@ -35,6 +40,14 @@ $ npm install
 ## Running the app
 
 ```bash
+# Migrations
+npx knex migrate:up 20220317153305_init.ts --knexfile src/database/knexfile.ts 
+npx knex migrate:down 20220317153305_init.ts --knexfile src/database/knexfile.ts
+npx knex migrate:latest --knexfile src/database/knexfile.ts 
+
+# Seed the database
+npx knex seed:run --knexfile src/database/knexfile.ts
+
 # development
 $ npm run start
 
@@ -48,6 +61,14 @@ $ npm run start:prod
 ## Test
 
 ```bash
+# Migrations
+npx knex migrate:up 20220317153305_init.ts --knexfile src/database/knexfile-test.ts 
+npx knex migrate:down 20220317153305_init.ts --knexfile src/database/knexfile-test.ts 
+npx knex migrate:latest --knexfile src/database/knexfile-test.ts 
+
+# Seed the database
+npx knex seed:run --knexfile src/database/knexfile-test.ts
+
 # unit tests
 $ npm run test
 
@@ -64,9 +85,9 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 ## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- Author - [Ikem Ezechukwu](ikem.ezechukwu@outlook.com)
+- LinkedIn - [https://www.linkedin.com/in/ikem-ezechukwu-547261109/](https://www.linkedin.com/in/ikem-ezechukwu-547261109/)
+
 
 ## License
 
