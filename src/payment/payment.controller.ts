@@ -26,7 +26,7 @@ export class PaymentController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Post('/withdraw')
+    @Post('/transfer')
     @HttpCode(200)
     transfer(@Body() transferDto: TransferDto, @Request() req){
         return this.paymentService.transfer(transferDto, req.user.email);
