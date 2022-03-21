@@ -1,4 +1,5 @@
 import { Knex } from "knex";
+import { TransactionType } from "../../payment/enums/TransactionType";
 import AccountType from "../../account/enums/AccountTypes";
 
 
@@ -18,13 +19,13 @@ export async function up(knex: Knex): Promise<void> {
         table.double('balance', 2).notNullable().defaultTo(0);
         table.integer('user_id').unsigned();
         table.foreign('user_id').references('user.id').onDelete('cascade').onUpdate('cascade');
-        table.string('user_email').references('user.email').onDelete('cascade').onUpdate('cascade');
-        table.string('user_phone_number').references('user.phone_number').onDelete('cascade').onUpdate('cascade');
+        table.string('user_email').references('user.email').onDelete('cascade').onUpdate('cascade').notNullable();
+        table.string('user_phone_number').references('user.phone_number').onDelete('cascade').onUpdate('cascade').notNullable();
         table.integer('account_pin').nullable().checkPositive().checkLength('=', 4);
-        table.enu('type', [AccountType.CURRENT, AccountType.SAVINGS]);
+        table.enu('type', [AccountType.CURRENT, AccountType.SAVINGS]).defaultTo(AccountType.CURRENT);
         table.timestamps(true, true);
     })
-    .createTable('transaction', (table: Knex.CreateTableBuilder)=>{
+    .createTable('intra_transaction', (table: Knex.CreateTableBuilder)=>{
         table.increments('id').primary();
         table.string('account_credited', 10).notNullable().checkLength('>=', 10);
         table.string('account_debited', 10).notNullable().checkLength('>=', 10);
@@ -39,12 +40,31 @@ export async function up(knex: Knex): Promise<void> {
         table.uuid('reference').notNullable().unique();
         table.timestamps(true, true);
     })
+    .createTable('inter_transaction', (table: Knex.CreateTableBuilder)=>{
+        table.increments('id').primary();
+        table.string('account_number', 10).notNullable().checkLength('>=', 10);
+        table.enu('type', [TransactionType.FUND, TransactionType.WITHDRAWAL, TransactionType.TRANSFER]).notNullable();
+        table.double('amount', 2).notNullable();
+        table.string('comments');
+        table.uuid('reference').notNullable().unique();
+        table.timestamps(true, true);
+    })
+    .createTable('transaction_history', (table: Knex.CreateTableBuilder)=>{
+        table.increments('id').primary();
+        table.string('user_email').references('user.email').onDelete('cascade').onUpdate('cascade').notNullable();
+        table.string('account_number', 10).notNullable().checkLength('>=', 10);
+        table.string('transaction_ref').notNullable().unique();
+        table.boolean('credit').notNullable();
+        table.timestamps(true, true);
+    })
 }
 
 
 export async function down(knex: Knex): Promise<void> {
     return knex.schema.dropTable('account')
+    .dropTable('transaction_history')
     .dropTable('user')
-    .dropTable('transaction');
+    .dropTable('intra_transaction')
+    .dropTable('inter_transaction');
 }
 

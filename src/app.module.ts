@@ -7,6 +7,7 @@ import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
 import knexfile, { DEV_CONNECTION } from './database/knexfile';
 import { ConfigModule } from '@nestjs/config';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { ConfigModule } from '@nestjs/config';
       envFilePath: ['.dev.env'] // Change in production
     }),
     AccountModule,
-    AuthModule
+    AuthModule,
+    PaymentModule
   ],
   controllers: [AuthController],
   providers: [AuthService],
