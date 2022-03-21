@@ -1,5 +1,5 @@
-import { User } from "src/user/entities/user.entity";
+import { FetchUserResponse } from "../../../user/interfaces/responses/fetchUserResponse";
 
-export interface LoginResponse extends User{
+export interface LoginResponse extends FetchUserResponse{
     access_token: string;
 }

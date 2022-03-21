@@ -13,7 +13,7 @@ import { IUserService, USER_SERVICE } from '../src/user/interfaces/user.interfaa
 import { AccountNumberEntity } from '../src/account/entities/account.entity';
 import { CreateUserResponse } from '../src/user/interfaces/responses/createResponse';
 
-describe('AppController (e2e)', () => {
+describe('UserController (e2e)', () => {
   let app: INestApplication;
   let db: Knex;
 

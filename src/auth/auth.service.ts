@@ -39,7 +39,11 @@ export class AuthService implements IAuthService {
         
         let payload = { sub: user.id, email: user.email };
         let result: LoginResponse = {
-            ...user,
+            id: user.id,
+            email: user.email,
+            phone_number: user.phone_number,
+            last_name: user.last_name,
+            first_name: user.first_name,
             access_token: this.jwtService.sign(payload)
         }
         return result;

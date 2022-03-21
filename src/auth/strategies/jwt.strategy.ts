@@ -7,7 +7,7 @@ export class JwtStrategy extends PassportStrategy(Strategy){
     
     constructor() {
         super({
-            secretOrKey: process.env.SECRET_KEY,
+            secretOrKey: process.env.SECRET_KEY || 'WOWSECRETLOL',
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: true // For the purposes of this exercise
         });

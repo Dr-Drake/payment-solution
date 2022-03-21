@@ -18,7 +18,7 @@ import { ConfigModule } from '@nestjs/config';
 import { FundResponse } from '../src/payment/interfaces/response/FundResponse';
 import { TransferDto } from '../src/payment/dto/transfer.dto';
 
-describe('AppController (e2e)', () => {
+describe('PaymentController (e2e)', () => {
   let app: INestApplication;
   let db: Knex;
   let jwtService: JwtService;

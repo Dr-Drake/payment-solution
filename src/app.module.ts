@@ -8,21 +8,25 @@ import { AuthModule } from './auth/auth.module';
 import knexfile, { DEV_CONNECTION } from './database/knexfile';
 import { ConfigModule } from '@nestjs/config';
 import { PaymentModule } from './payment/payment.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
-    UserModule,
+    
     KnexModule.forRoot({
       config: knexfile['development'], // change in production
     }, DEV_CONNECTION),
     ConfigModule.forRoot({
       envFilePath: ['.dev.env'] // Change in production
     }),
+    JwtModule.register({
+      secret: process.env.SECRET_KEY,
+      signOptions: { expiresIn: '10h' }
+    }),
+    UserModule,
     AccountModule,
     AuthModule,
     PaymentModule
   ],
-  controllers: [AuthController],
-  providers: [AuthService],
 })
 export class AppModule {}

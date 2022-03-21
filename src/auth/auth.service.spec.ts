@@ -13,6 +13,8 @@ import { CreateUserDto } from '../user/dto/create-user.dto';
 import { User } from '../user/entities/user.entity';
 import { LoginResponse } from './interfaces/responses/LoginResponse';
 import { AUTH_SERVICE, IAuthService } from './interfaces/auth.interface';
+import { PassportModule } from '@nestjs/passport';
+import { LocalStrategy } from './strategies/local.strategy';
 
 describe('AuthService', () => {
   let service: IAuthService;
@@ -32,6 +34,7 @@ describe('AuthService', () => {
     db = knex(knexfile['testing']);
     const module: TestingModule = await Test.createTestingModule({
       imports:[
+        PassportModule, 
         KnexModule.forRoot({
           config: knexfile['testing'],
         }, DEV_CONNECTION),
@@ -41,6 +44,7 @@ describe('AuthService', () => {
         })
       ],
       providers: [
+        LocalStrategy,
         { provide: USER_SERVICE, useClass: UserService },
         { provide: ACCOUNT_SERVICE, useClass: AccountService },
         { provide: AUTH_SERVICE, useClass: AuthService }  
@@ -92,7 +96,11 @@ describe('AuthService', () => {
     let user = await service.validateUser(createRequest.email, createRequest.password);
     expect(await service.login(user))
     .toEqual<LoginResponse>({
-      ...user,
+      id: user.id,
+      email: user.email,
+      phone_number: user.phone_number,
+      last_name: user.last_name,
+      first_name: user.first_name,
       access_token: expect.any(String)
     })
   })
