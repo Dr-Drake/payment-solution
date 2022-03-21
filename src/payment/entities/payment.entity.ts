@@ -24,7 +24,7 @@ export class InterTransaction{
 
 export class TransactionHistory{
     id: number;
-    email: string;
+    user_email: string;
     account_number: string;
     transaction_ref: string;
     credit: boolean;

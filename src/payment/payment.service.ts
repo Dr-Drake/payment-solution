@@ -5,7 +5,7 @@ import { DEV_CONNECTION } from '../database/knexfile';
 import { FundDto } from './dto/fund.dto';
 import { IPaymentService } from './interfaces/payment.interface';
 import { FundResponse } from './interfaces/response/FundResponse';
-import crypto from 'crypto';
+import {  randomBytes} from 'crypto';
 import { InterTransaction, IntraTransaction, TransactionHistory } from './entities/payment.entity';
 import { TransactionType } from './enums/TransactionType';
 import { TransferDto } from './dto/transfer.dto';
@@ -19,7 +19,7 @@ export class PaymentService implements IPaymentService {
     
 
     private async generateTransactionReference(){
-        let prefix = 'P' + crypto.randomBytes(6).toString('hex');
+        let prefix = 'P' + randomBytes(6).toString('hex');
         let suffix = Math.ceil(Math.random() * Date.now()).toPrecision(8).toString().replace(".", "");
         let ref = prefix + '-' + suffix;
         
@@ -48,7 +48,7 @@ export class PaymentService implements IPaymentService {
 
         if (ref) {
             // Update the account balance
-            await this.knex<Account>('account').update('balance', updatedBalance)
+            await this.knex<Account>('account').update('balance', updatedBalance.toFixed(2))
             .where('account_number', '=', fundDto.account_number)
             .andWhere('user_email', '=', email);
 
@@ -66,7 +66,7 @@ export class PaymentService implements IPaymentService {
             history.account_number = fundDto.account_number;
             history.credit = true;
             history.transaction_ref = ref;
-            history.email = email;
+            history.user_email = email;
 
             await this.knex<TransactionHistory>('transaction_history').insert(history);
 
@@ -106,7 +106,7 @@ export class PaymentService implements IPaymentService {
 
         if (ref) {
             // Update the account balance
-            await this.knex<Account>('account').update('balance', updatedBalance)
+            await this.knex<Account>('account').update('balance', updatedBalance.toFixed(2))
             .where('account_number', '=', fundDto.account_number)
             .andWhere('user_email', '=', email);
 
@@ -124,7 +124,7 @@ export class PaymentService implements IPaymentService {
             history.account_number = fundDto.account_number;
             history.credit = false;
             history.transaction_ref = ref;
-            history.email = email;
+            history.user_email = email;
 
             await this.knex<TransactionHistory>('transaction_history').insert(history);
 
@@ -175,12 +175,12 @@ export class PaymentService implements IPaymentService {
 
         if (ref) {
             // Update the debit account balance
-            await this.knex<Account>('account').update('balance', accountToDebitUpdatedBalance)
+            await this.knex<Account>('account').update('balance', accountToDebitUpdatedBalance.toFixed(2))
             .where('account_number', '=', transferDto.account_to_debit)
             .andWhere('user_email', '=', email);
 
             // Update the credit account balance
-            await this.knex<Account>('account').update('balance', accountToCreditUpdatedBalance)
+            await this.knex<Account>('account').update('balance', accountToCreditUpdatedBalance.toFixed(2))
             .where('account_number', '=', transferDto.account_to_credit)
 
             // Add transaction to the transaction table
@@ -197,13 +197,13 @@ export class PaymentService implements IPaymentService {
             historyOfDebit.account_number = transferDto.account_to_debit;
             historyOfDebit.credit = false;
             historyOfDebit.transaction_ref = ref;
-            historyOfDebit.email = email;
+            historyOfDebit.user_email = email;
 
             let historyOfCredit: TransactionHistory = new TransactionHistory();
             historyOfCredit.account_number = transferDto.account_to_credit;
             historyOfCredit.credit = true;
             historyOfCredit.transaction_ref = ref;
-            historyOfCredit.email = accountToCredit.user_email;
+            historyOfCredit.user_email = accountToCredit.user_email;
 
             await this.knex<TransactionHistory>('transaction_history').insert([historyOfDebit, historyOfCredit]);
 

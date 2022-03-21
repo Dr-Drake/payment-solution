@@ -16,20 +16,20 @@ export async function up(knex: Knex): Promise<void> {
     .createTable('account', (table: Knex.CreateTableBuilder)=>{
         table.increments('id').primary();
         table.string('account_number', 10).notNullable().unique().checkLength('>=', 10);
-        table.double('balance', 2).notNullable().defaultTo(0);
+        table.double('balance').notNullable().defaultTo(0);
         table.integer('user_id').unsigned();
         table.foreign('user_id').references('user.id').onDelete('cascade').onUpdate('cascade');
         table.string('user_email').references('user.email').onDelete('cascade').onUpdate('cascade').notNullable();
         table.string('user_phone_number').references('user.phone_number').onDelete('cascade').onUpdate('cascade').notNullable();
         table.integer('account_pin').nullable().checkPositive().checkLength('=', 4);
-        table.enu('type', [AccountType.CURRENT, AccountType.SAVINGS]).defaultTo(AccountType.CURRENT);
+        table.enu('type', [AccountType.CURRENT, AccountType.SAVINGS]).notNullable();
         table.timestamps(true, true);
     })
     .createTable('intra_transaction', (table: Knex.CreateTableBuilder)=>{
         table.increments('id').primary();
         table.string('account_credited', 10).notNullable().checkLength('>=', 10);
         table.string('account_debited', 10).notNullable().checkLength('>=', 10);
-        table.double('amount', 2).notNullable();
+        table.double('amount').notNullable();
         table.string('comments');
 
         /**
@@ -43,8 +43,8 @@ export async function up(knex: Knex): Promise<void> {
     .createTable('inter_transaction', (table: Knex.CreateTableBuilder)=>{
         table.increments('id').primary();
         table.string('account_number', 10).notNullable().checkLength('>=', 10);
-        table.enu('type', [TransactionType.FUND, TransactionType.WITHDRAWAL, TransactionType.TRANSFER]).notNullable();
-        table.double('amount', 2).notNullable();
+        table.integer('type').notNullable();
+        table.double('amount').notNullable();
         table.string('comments');
         table.uuid('reference').notNullable().unique();
         table.timestamps(true, true);
@@ -53,7 +53,7 @@ export async function up(knex: Knex): Promise<void> {
         table.increments('id').primary();
         table.string('user_email').references('user.email').onDelete('cascade').onUpdate('cascade').notNullable();
         table.string('account_number', 10).notNullable().checkLength('>=', 10);
-        table.string('transaction_ref').notNullable().unique();
+        table.string('transaction_ref').notNullable();
         table.boolean('credit').notNullable();
         table.timestamps(true, true);
     })
