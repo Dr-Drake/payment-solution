@@ -78,6 +78,18 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+## Gotchas
+```
+# MYSQL Config
+Remember to change the mysql config to your liking.
+
+# Authentication
+PassportJS (a local strategy) is used for the authentication.
+The payload expected is { username: '', password: ' }
+
+# Environment variables
+Create a .dev.env file in the root of the project.
+```
 
 ## Support
 
