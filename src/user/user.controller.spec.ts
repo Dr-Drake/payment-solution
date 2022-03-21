@@ -51,20 +51,20 @@ describe('UserController', () => {
     })
   });
 
-  it('should fetch all users', async()=>{
-    expect(await controller.findAll())
-    .toEqual<User[]>(userDb);
-  });
+  // it('should fetch all users', async()=>{
+  //   expect(await controller.findAll())
+  //   .toEqual<User[]>(userDb);
+  // });
 
-  it('should fetch one user by email', async()=>{
-    expect(await controller.findUserByEmail('ikem.ezechukwu@mail.com'))
-    .toEqual<User>(userDb[0]);
-  });
+  // it('should fetch one user by email', async()=>{
+  //   expect(await controller.findUserByEmail('ikem.ezechukwu@mail.com'))
+  //   .toEqual<User>(userDb[0]);
+  // });
 
-  it('should fetch one user by phone number', async()=>{
-    expect(await controller.findUserByPhoneNumber('09359002143'))
-    .toEqual<User>(userDb[1]);
-  })
+  // it('should fetch one user by phone number', async()=>{
+  //   expect(await controller.findUserByPhoneNumber('09359002143'))
+  //   .toEqual<User>(userDb[1]);
+  // })
 
 
 });

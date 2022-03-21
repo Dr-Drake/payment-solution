@@ -17,10 +17,11 @@ import { JwtModule } from '@nestjs/jwt';
       config: knexfile['development'], // change in production
     }, DEV_CONNECTION),
     ConfigModule.forRoot({
-      envFilePath: ['.dev.env'] // Change in production
+      envFilePath: ['.dev.env'], // Change in production
+      isGlobal: true
     }),
     JwtModule.register({
-      secret: process.env.SECRET_KEY,
+      secret: 'WOWSECRETLOL',
       signOptions: { expiresIn: '10h' }
     }),
     UserModule,

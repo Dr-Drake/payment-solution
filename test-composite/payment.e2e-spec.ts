@@ -17,6 +17,7 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { FundResponse } from '../src/payment/interfaces/response/FundResponse';
 import { TransferDto } from '../src/payment/dto/transfer.dto';
+import { CreatePinDto } from '../src/account/dto/create-pin.dto';
 
 describe('PaymentController (e2e)', () => {
   let app: INestApplication;
@@ -28,6 +29,8 @@ describe('PaymentController (e2e)', () => {
   let accountService: IAccountService;
   let account1: Account;
   let account2: Account;
+  let user1: CreateUserResponse;
+  let user2: CreateUserResponse;
 
   // Sample create account
   let createRequest: CreateUserDto = {
@@ -54,7 +57,7 @@ describe('PaymentController (e2e)', () => {
                 envFilePath: ['.dev.env'] // Change in production
             }),
             JwtModule.register({
-                secret: process.env.SECRET_KEY,
+                secret: 'WOWSECRETLOL',
                 signOptions: { expiresIn: '10h' }
             }),
             KnexModule.forRoot({
@@ -77,8 +80,20 @@ describe('PaymentController (e2e)', () => {
     jwtService = moduleFixture.get<JwtService>(JwtService);
 
     // Create accounts to use for testing
-    let user1 = await userService.createUser(createRequest);
-    let user2 = await userService.createUser(createRequest2);
+    user1 = await userService.createUser(createRequest);
+    user2 = await userService.createUser(createRequest2);
+
+    let pinRequest1: CreatePinDto = {
+      account_number: user1.account_number,
+      pin: 1234
+    }
+    let pinRequest2: CreatePinDto = {
+      account_number: user2.account_number,
+      pin: 1234
+    }
+
+    await accountService.createAccountPin(pinRequest1, createRequest.email)
+    await accountService.createAccountPin(pinRequest2, createRequest2.email)
 
     // Create token
     let payload = { sub: user1.id, email: user1.email };
@@ -106,7 +121,8 @@ describe('PaymentController (e2e)', () => {
   it('/api/v1/payment/fund (POST)', () => {
     let fundRequest: FundDto = {
         amount: 1000,
-        account_number: account1.account_number
+        account_number: account1.account_number,
+        pin: 1234
     }
     return request(app.getHttpServer())
       .post('/api/v1/payment/fund')
@@ -127,7 +143,8 @@ describe('PaymentController (e2e)', () => {
   it('/api/v1/payment/withdraw (POST)', () => {
     let fundRequest: FundDto = {
         amount: 10,
-        account_number: account1.account_number
+        account_number: account1.account_number,
+        pin: 1234
     }
     return request(app.getHttpServer())
       .post('/api/v1/payment/withdraw')
@@ -150,6 +167,7 @@ describe('PaymentController (e2e)', () => {
         amount: 10,
         account_to_credit: account2.account_number,
         account_to_debit: account1.account_number,
+        pin: 1234
       }
     return request(app.getHttpServer())
       .post('/api/v1/payment/transfer')

@@ -12,6 +12,8 @@ import { IUserService, USER_SERVICE } from '../user/interfaces/user.interfaace';
 import { FundDto } from './dto/fund.dto';
 import { FundResponse } from './interfaces/response/FundResponse';
 import { TransferDto } from './dto/transfer.dto';
+import { CreateUserResponse } from '../user/interfaces/responses/createResponse';
+import { CreatePinDto } from '../account/dto/create-pin.dto';
 
 describe('PaymentService', () => {
   let service: PaymentService;
@@ -20,13 +22,15 @@ describe('PaymentService', () => {
   let account1: Account;
   let account2: Account;
 
+  let user1: CreateUserResponse;
+  let user2: CreateUserResponse;
   let db: Knex;
 
   // Sample create account
   let createRequest: CreateUserDto = {
-    email: 'yinka.mayor@mail.com',
+    email: 'mick.mayor@mail.com',
     password: 'jkwjkjkw',
-    phone_number: '07109987765',
+    phone_number: '01109987765',
     last_name: 'Yinka',
     first_name: 'Mayor'
   }
@@ -61,8 +65,20 @@ describe('PaymentService', () => {
     accountService = module.get<IAccountService>(ACCOUNT_SERVICE);
 
     // Create accounts to use for testing
-    await userService.createUser(createRequest);
-    await userService.createUser(createRequest2);
+    user1 = await userService.createUser(createRequest);
+    user2 = await userService.createUser(createRequest2);
+
+    let pinRequest1: CreatePinDto = {
+      account_number: user1.account_number,
+      pin: 1234
+    }
+    let pinRequest2: CreatePinDto = {
+      account_number: user2.account_number,
+      pin: 1234
+    }
+
+    await accountService.createAccountPin(pinRequest1, createRequest.email)
+    await accountService.createAccountPin(pinRequest2, createRequest2.email)
 
     account1 = await accountService.findAccountByEmail(createRequest.email);
     account2 = await accountService.findAccountByEmail(createRequest2.email);
@@ -91,7 +107,8 @@ describe('PaymentService', () => {
   it('should fund an account',async () => {
     let fundRequest: FundDto = {
       amount: 1000,
-      account_number: account1.account_number
+      account_number: account1.account_number,
+      pin: 1234
     }
     expect(await service.fundAccount(fundRequest, account1.user_email))
     .toEqual<FundResponse>({
@@ -106,7 +123,8 @@ describe('PaymentService', () => {
   it('should withdraw from an account',async () => {
     let fundRequest: FundDto = {
       amount: 10,
-      account_number: account1.account_number
+      account_number: account1.account_number,
+      pin: 1234
     }
     expect(await service.withdrawFromAccount(fundRequest, account1.user_email))
     .toEqual<FundResponse>({
@@ -123,6 +141,7 @@ describe('PaymentService', () => {
       amount: 10,
       account_to_credit: account2.account_number,
       account_to_debit: account1.account_number,
+      pin: 1234
     }
     expect(await service.transfer(fundRequest, account1.user_email))
     .toEqual<FundResponse>({

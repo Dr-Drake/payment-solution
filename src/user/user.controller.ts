@@ -16,20 +16,20 @@ export class UserController {
     return this.userService.createUser(createUserDto);
   }
 
-  @Get()
-  findAll() {
-    return this.userService.findAllUsers();
-  }
+  // @Get()
+  // findAll() {
+  //   return this.userService.findAllUsers();
+  // }
 
-  @Get(':email')
-  findUserByEmail(@Param('email') email: string) {
-    return this.userService.findUserByEmail(email);
-  }
+  // @Get(':email')
+  // findUserByEmail(@Param('email') email: string) {
+  //   return this.userService.findUserByEmail(email);
+  // }
 
-  @Get(':phone_number')
-  findUserByPhoneNumber(@Param('phone_number') phone_number: string) {
-    return this.userService.findUserByPhoneNumber(phone_number);
-  }
+  // @Get(':phone_number')
+  // findUserByPhoneNumber(@Param('phone_number') phone_number: string) {
+  //   return this.userService.findUserByPhoneNumber(phone_number);
+  // }
 
   // @Patch(':id')
   // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {

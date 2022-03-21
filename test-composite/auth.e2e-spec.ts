@@ -38,7 +38,7 @@ describe('AuthController (e2e)', () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
         imports: [
             ConfigModule.forRoot({
-              envFilePath: ['.dev.env'] // Change in production
+              envFilePath: ['.dev.env'] // Change in production,
             }),
             AuthModule,
             KnexModule.forRoot({

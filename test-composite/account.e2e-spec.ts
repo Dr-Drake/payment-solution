@@ -42,7 +42,7 @@ describe('AppController (e2e)', () => {
                 envFilePath: ['.dev.env'] // Change in production
             }),
             JwtModule.register({
-                secret: process.env.SECRET_KEY,
+                secret: 'WOWSECRETLOL',
                 signOptions: { expiresIn: '10h' }
             }),
             KnexModule.forRoot({

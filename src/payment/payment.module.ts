@@ -8,7 +8,7 @@ import { PaymentService } from './payment.service';
 
 @Module({
   imports:[
-    PassportModule, 
+    PassportModule 
   ],
   controllers: [PaymentController],
   providers: [

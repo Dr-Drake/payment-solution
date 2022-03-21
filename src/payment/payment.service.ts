@@ -29,8 +29,8 @@ export class PaymentService implements IPaymentService {
     public async fundAccount(fundDto: FundDto, email: string): Promise<FundResponse> {
         
         // Fetch account balance
-        let result: Pick<Account, 'balance'> = await this.knex<Account>('account')
-        .select('balance')
+        let result = await this.knex<Account>('account')
+        .select('balance', 'account_pin')
         .where('account_number', '=', fundDto.account_number)
         .andWhere('user_email', '=', email)
         .first();
@@ -38,6 +38,11 @@ export class PaymentService implements IPaymentService {
         // If account not found
         if (!result) {
             throw new BadRequestException('Account not found ');
+        }
+
+        // If account pin doesn't match
+        if (result.account_pin !== fundDto.pin) {
+            throw new BadRequestException('Incorrect Pin');
         }
 
         // Add amount to balance
@@ -82,8 +87,8 @@ export class PaymentService implements IPaymentService {
 
     public async withdrawFromAccount(fundDto: FundDto, email: string): Promise<FundResponse> {
         // Fetch account balance
-        let result: Pick<Account, 'balance'> = await this.knex<Account>('account')
-        .select('balance')
+        let result = await this.knex<Account>('account')
+        .select('balance', 'account_pin')
         .where('account_number', '=', fundDto.account_number)
         .andWhere('user_email', '=', email)
         .first();
@@ -91,6 +96,11 @@ export class PaymentService implements IPaymentService {
         // If account not found
         if (!result) {
             throw new BadRequestException('Account not found ');
+        }
+
+        // If account pin doesn't match
+        if (result.account_pin !== fundDto.pin) {
+            throw new BadRequestException('Incorrect Pin');
         }
 
         // Check if user has enough balance
@@ -139,9 +149,14 @@ export class PaymentService implements IPaymentService {
     }
 
     public async transfer(transferDto: TransferDto, email: string): Promise<FundResponse> {
+
+        // If account to debit and credit are the same, not allowed
+        if (transferDto.account_to_credit === transferDto.account_to_debit) {
+            throw new BadRequestException('Transaction to the same account not allowed');
+        }
         // Fetch account to debit balance
-        let result: Pick<Account, 'balance'> = await this.knex<Account>('account')
-        .select('balance')
+        let result = await this.knex<Account>('account')
+        .select('balance', 'account_pin')
         .where('account_number', '=', transferDto.account_to_debit)
         .andWhere('user_email', '=', email)
         .first();
@@ -149,6 +164,11 @@ export class PaymentService implements IPaymentService {
         // If account not found
         if (!result) {
             throw new BadRequestException('Account not found ');
+        }
+
+        // If account pin doesn't match
+        if (result.account_pin !== transferDto.pin) {
+            throw new BadRequestException('Incorrect Pin');
         }
 
         // Check if user has enough balance

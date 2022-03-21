@@ -13,7 +13,8 @@ describe('PaymentController', () => {
   let transferRequest: TransferDto = {
     amount: 100,
     account_to_credit: '0477890997',
-    account_to_debit: '0577890937'
+    account_to_debit: '0577890937',
+    pin: 1234
   }
 
   beforeEach(async () => {
