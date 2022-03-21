@@ -1,11 +1,13 @@
-import { Injectable, NotImplementedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotImplementedException } from '@nestjs/common';
 import { InjectKnex, Knex } from 'nestjs-knex';
 import { DEV_CONNECTION } from '../database/knexfile';
 import { CreateAccountDto } from './dto/create-account.dto';
+import { CreatePinDto } from './dto/create-pin.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 import { Account, AccountNumberEntity } from './entities/account.entity';
 import { IAccountService } from './interfaces/account.interface';
 import { CreateAccountResponse } from './interfaces/reponses/createAccountResponse';
+import { CreatePinResponse } from './interfaces/reponses/createPinResponse';
 
 @Injectable()
 export class AccountService implements IAccountService {
@@ -46,6 +48,30 @@ export class AccountService implements IAccountService {
       }
 
       return response;
+    }
+  }
+
+  public async createAccountPin(request: CreatePinDto, email: string): Promise<CreatePinResponse> {
+
+    // First check if account exists
+    let account = await this.knex<Account>('account')
+    .where('account_number', '=', request.account_number)
+    .andWhere('user_email', '=', email)
+    .first();
+
+    // If account not found
+    if (!account) {
+      throw new BadRequestException('Account not found for this user');
+    }
+    
+    // Update pin for account
+    await this.knex<Account>('account').update('account_pin', request.pin)
+    .where('account_number', '=', request.account_number)
+    .andWhere('user_email', '=', email);
+
+    return{
+      message: 'Success',
+      account_number: request.account_number,
     }
   }
 

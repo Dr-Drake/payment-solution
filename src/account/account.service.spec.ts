@@ -10,6 +10,8 @@ import { UserService } from '../user/user.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { ACCOUNT_SERVICE, IAccountService } from './interfaces/account.interface';
 import { CreateUserResponse } from '../user/interfaces/responses/createResponse';
+import { CreatePinDto } from './dto/create-pin.dto';
+import { CreatePinResponse } from './interfaces/reponses/createPinResponse';
 
 describe('AccountService', () => {
   let service: IAccountService;
@@ -92,6 +94,19 @@ describe('AccountService', () => {
       type: expect.anything(),
       created_at: expect.any(Date),
       updated_at: expect.any(Date),
+    })
+  })
+
+  it("should create a pin for a user's existing account", async ()=>{
+    let account = await service.findAccountByEmail(createRequest.email);
+    let pinRequest: CreatePinDto = {
+      account_number: account.account_number,
+      pin: 1234
+    }
+    expect(await service.createAccountPin(pinRequest, createRequest.email))
+    .toEqual<CreatePinResponse>({
+      account_number: expect.any(String),
+      message: expect.any(String)
     })
   })
 });
